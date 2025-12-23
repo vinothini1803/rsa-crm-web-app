@@ -1,0 +1,8 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="cases-assigned">
+<path id="document" d="M4.5 3.5H11.5C12.3284 3.5 13 4.17157 13 5V16.5C13 17.3284 12.3284 18 11.5 18H4.5C3.67157 18 3 17.3284 3 16.5V5C3 4.17157 3.67157 3.5 4.5 3.5Z" stroke="#959595" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="lines" d="M6 7H10M6 10H10M6 13H8" stroke="#959595" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle id="badge" cx="14.5" cy="6.5" r="2.5" stroke="#0370F2" stroke-width="1.5" fill="none"/>
+<path id="checkmark" d="M13.5 6.5L14.5 7.5L16 6" stroke="#0370F2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

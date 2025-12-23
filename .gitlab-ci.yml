@@ -1,0 +1,21 @@
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  script:
+    - sleep 120 #( Gitlab to github mirror )
+    - hostname
+    - cd /data/var/www/VDMS/RSA-CRM-Web-App
+    - sudo git stash
+    - sudo git pull origin main
+    - sudo git checkout origin/main -f
+    - sudo npm install
+    - sudo npm i @popperjs/core
+    - sudo npm run build:prod
+    - ls -la
+  tags:
+    - VDMS
+    - Prod
+  only:
+    - main

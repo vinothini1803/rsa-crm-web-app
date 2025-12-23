@@ -1,0 +1,35 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="20" height="20" fill="#F5F5F5"/>
+<g id="Cases - Assign ASP Towing" clip-path="url(#clip0_50_590)">
+<rect width="1440" height="970" transform="translate(-140 -438)" fill="#F5F7F9"/>
+<g id="Rectangle 5995" filter="url(#filter0_d_50_590)">
+<path d="M-48 -182H1300V532H-48V-182Z" fill="white"/>
+</g>
+<g id="Group 2609152">
+<g id="Group 2609076">
+<rect id="Rectangle 5968" x="-23.5" y="-83.5" width="627" height="217" rx="7.5" fill="white" stroke="#EAEAEA"/>
+<g id="Frame 6841">
+<rect x="-8" y="-2" width="130" height="24" rx="12" fill="#0370F2" fill-opacity="0.1"/>
+<g id="location-arrow">
+<path id="Icon" d="M5.82786 10.952C4.63717 10.489 4.04183 10.2575 3.86801 9.92385C3.71734 9.63465 3.71714 9.29015 3.86747 9.00078C4.04089 8.66697 4.63596 8.43475 5.82611 7.9703L12.6016 5.3262C13.676 4.90694 14.2131 4.69731 14.5564 4.81198C14.8545 4.91157 15.0884 5.1455 15.188 5.4436C15.3027 5.78686 15.0931 6.32404 14.6738 7.3984L12.0297 14.1739C11.5653 15.364 11.333 15.9591 10.9992 16.1325C10.7098 16.2829 10.3653 16.2827 10.0761 16.132C9.74254 15.9582 9.51102 15.3628 9.04797 14.1721L8.4015 12.5098C8.30751 12.2681 8.26051 12.1472 8.18793 12.0455C8.12359 11.9553 8.04471 11.8764 7.95452 11.8121C7.85276 11.7395 7.73191 11.6925 7.49021 11.5985L5.82786 10.952Z" stroke="#0370F2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_50_590" x="-56" y="-188" width="1364" height="730" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2"/>
+<feGaussianBlur stdDeviation="4"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_50_590"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_50_590" result="shape"/>
+</filter>
+<clipPath id="clip0_50_590">
+<rect width="1440" height="970" fill="white" transform="translate(-140 -438)"/>
+</clipPath>
+</defs>
+</svg>

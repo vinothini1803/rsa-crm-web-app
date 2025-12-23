@@ -1,0 +1,39 @@
+@import url("../../../assets/styles/variable.less");
+
+/* BusinessHours */
+.form-field {
+  padding: 0px 20px;
+}
+.field-title-text {
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+/*OpreatingHours  */
+.radio-btn-container {
+  display: flex;
+  gap: 16px;
+}
+.custom-radio-btn {
+  font-weight: 500;
+  color: @color_grey;
+  display: flex;
+  gap: 8px;
+  &:hover {
+    color: @color_grey !important;
+  }
+  &.active {
+    color: #242424 !important;
+    border-color: @color_default !important;
+    &:hover {
+      color: #242424;
+      border-color: @color_default !important;
+    }
+  }
+}
+.table-container {
+  margin-top: 24px;
+}
+.day-text{
+  color: #242424
+}

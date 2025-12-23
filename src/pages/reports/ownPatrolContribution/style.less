@@ -1,0 +1,291 @@
+.own-patrol-contribution-table-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 600px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  scrollbar-gutter: stable;
+
+  .own-patrol-contribution-table {
+    width: 100%;
+    min-width: 2400px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #ffffff;
+
+    // Base header styling
+    thead {
+      background: #fecc3f;
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      font-family: "Poppins", sans-serif;
+
+      th {
+        background: #fecc3f !important;
+        position: relative;
+        z-index: 15;
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        color: #1a2e35;
+        text-transform: uppercase;
+        padding: 14px 12px;
+        vertical-align: middle;
+        border-bottom: 2px solid #d4a017;
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        text-align: center;
+        height: 48px;
+        line-height: 1.4;
+        box-sizing: border-box;
+        letter-spacing: 0.5px;
+
+        // First row header group styling
+        &.header-group {
+          text-align: center;
+          font-weight: 700;
+          font-size: 13px;
+          color: #1a2e35;
+          text-transform: uppercase;
+          vertical-align: middle;
+          background: #fecc3f !important;
+        }
+
+        // Month headers
+        &.month-header {
+          text-align: center;
+          min-width: 70px;
+          font-weight: 700;
+          font-size: 11px;
+          color: #1a2e35;
+          text-transform: uppercase;
+        }
+
+        // Total headers
+        &.total-header {
+          text-align: center;
+          font-weight: 700;
+          font-size: 11px;
+          color: #1a2e35;
+          text-transform: uppercase;
+          min-width: 80px;
+          background: rgba(0, 0, 0, 0.05) !important;
+        }
+
+        // Rowspan headers
+        &[rowspan="2"] {
+          height: 96px;
+          vertical-align: middle;
+        }
+      }
+
+      // Right-aligned headers for RM and ZM
+      th.sticky-right-rm,
+      th.sticky-right-zm {
+        text-align: center;
+        font-weight: 700;
+        font-size: 12px;
+        color: #1a2e35;
+        text-transform: uppercase;
+      }
+
+      th.sticky-right-rm {
+        min-width: 150px;
+        width: 150px;
+      }
+
+      th.sticky-right-zm {
+        min-width: 150px;
+        width: 150px;
+      }
+    }
+
+    // Base body styling
+    tbody {
+      font-family: "Poppins", sans-serif;
+
+      tr {
+        border-bottom: 1px solid #e5e7eb;
+        background-color: #ffffff;
+        transition: background-color 0.2s ease;
+
+        &:nth-child(even) {
+          background-color: #f9fafb;
+
+          td {
+            background-color: #f9fafb;
+          }
+        }
+
+        &:nth-child(odd) {
+          background-color: #ffffff;
+
+          td {
+            background-color: #ffffff;
+          }
+        }
+
+        &:hover {
+          background-color: #f3f4f6;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+          td {
+            background-color: #f3f4f6;
+          }
+        }
+
+        td {
+          padding: 12px 10px;
+          vertical-align: middle;
+          text-align: right;
+          border-right: 1px solid #e5e7eb;
+          border-bottom: 1px solid #e5e7eb;
+          background-color: inherit;
+          font-family: "Poppins", sans-serif;
+          font-size: 13px;
+          font-weight: 400;
+          color: #1f2937;
+          line-height: 1.6;
+
+          // City column (first column) - left aligned
+          &.sticky-left {
+            text-align: left;
+            font-weight: 500;
+            font-family: "Poppins", sans-serif;
+            font-size: 13px;
+            color: #111827;
+            min-width: 150px;
+            width: 150px;
+          }
+
+          // RM and ZM columns
+          &.sticky-right-rm,
+          &.sticky-right-zm {
+            text-align: left;
+            font-weight: 400;
+            font-size: 13px;
+            color: #374151;
+            min-width: 150px;
+            width: 150px;
+            max-width: 150px;
+            box-sizing: border-box;
+          }
+
+          // Number cells
+          &.number-cell {
+            text-align: right;
+            font-weight: 400;
+            color: #1f2937;
+            font-variant-numeric: tabular-nums;
+          }
+
+          // Total cells - slightly bolder
+          &.total-cell {
+            font-weight: 600;
+            color: #111827;
+            background-color: rgba(254, 204, 63, 0.1) !important;
+          }
+        }
+      }
+    }
+
+    // GRAND TOTAL ROW: Positioned immediately after headers (not at bottom)
+    tbody tr.grand-total-row {
+      position: sticky;
+      top: 96px; // After the two header rows
+      z-index: 12;
+      background: #d4a017 !important;
+      font-weight: 700;
+      font-family: "Poppins", sans-serif;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+      td {
+        background: #d4a017 !important;
+        border-top: 2px solid #c8960f;
+        border-bottom: 2px solid #c8960f;
+        padding: 14px 10px !important;
+        font-weight: 700;
+        font-family: "Poppins", sans-serif;
+        font-size: 14px;
+        color: #ffffff;
+        text-align: right !important;
+        z-index: 12;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+        // City column in grand total row
+        &.sticky-left {
+          text-align: left !important;
+          background: #d4a017 !important;
+          font-weight: 700;
+          font-family: "Poppins", sans-serif;
+          font-size: 14px;
+          color: #ffffff;
+        }
+
+        // RM and ZM columns in grand total row
+        &.sticky-right-rm,
+        &.sticky-right-zm {
+          background: #d4a017 !important;
+          text-align: left !important;
+        }
+
+        // Total cells in grand total row
+        &.total-cell {
+          background: rgba(0, 0, 0, 0.1) !important;
+          font-weight: 800;
+        }
+      }
+    }
+
+    // Ensure proper borders
+    th:first-child,
+    td:first-child {
+      border-left: 1px solid #d1d5db;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: 1px solid #d1d5db;
+    }
+
+    // First row in tbody (after grand total) should have top border
+    tbody tr:not(.grand-total-row):first-child td {
+      border-top: 2px solid #e5e7eb;
+    }
+  }
+
+  // Scrollbar styling - modern and sleek
+  &::-webkit-scrollbar-track {
+    background: #ffffff;
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #fecc3f;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    border: none;
+    min-height: 50px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+      background: #d4a017;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      background: #c8960f;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    }
+  }
+
+  // Firefox scrollbar
+  scrollbar-width: auto;
+  scrollbar-color: #fecc3f #ffffff;
+}

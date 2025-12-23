@@ -1,0 +1,10 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wrench/Service tool representing ROS (Repair On Site) -->
+  <path d="M14.7 6.3C15.7 5.3 17.2 5 18.5 5.5L15.5 8.5L16.5 11.5L19.5 12.5L22.5 9.5C23 10.8 22.7 12.3 21.7 13.3L13.4 21.6C12.6 22.4 11.3 22.4 10.5 21.6L8.4 19.5C7.6 18.7 7.6 17.4 8.4 16.6L14.7 6.3Z" stroke="#203036" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Circle representing rotation/service point -->
+  <circle cx="10.5" cy="18.5" r="1.5" stroke="#203036" stroke-width="1.5"/>
+  
+  <!-- X mark indicating failure/rejection -->
+  <path d="M3 3L8 8M8 3L3 8" stroke="#BA5D45" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

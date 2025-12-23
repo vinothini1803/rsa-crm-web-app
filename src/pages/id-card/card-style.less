@@ -1,0 +1,215 @@
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+}
+
+.main {
+  justify-content: center;
+  background-color: #ffff;
+  /* Add padding to avoid content touching the edges */
+  padding: 0 15px;
+}
+
+/* Card styling for larger screens */
+.card {
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background-color: white;
+}
+
+.logo {
+  background-image: url("../../assets/img/id-imgs/logo-bg.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  height: 399px;
+}
+
+.profile-image {
+  border-radius: 8%;
+  height: 120px;
+  width: 120px;
+  object-fit: cover;
+  border: 3px solid #ffff;
+  margin-top: -47px;
+  background-color: #fff;
+}
+.profile-sec {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 0 20px 0 20px;
+}
+.phone-sec {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  width: 100%;
+  font-size: 14px;
+
+}
+.rating-sec {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.rating {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.validity {
+  text-align: center;
+  color: #ea4335;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.resource-info {
+  background-color: #eaeaea;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+label {
+  color: #949494 !important;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.resource-info p {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Hide card on mobile screens */
+@media (max-width: 768px) {
+  .card {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .logo {
+    height: 269px;
+    background-size: contain;
+  }
+
+  .resource-info {
+    padding: 10px;
+  }
+
+  .main {
+    justify-content: unset;
+  }
+
+  .validity {
+    text-align: left;
+  }
+
+  /* Ensure no horizontal scroll on smaller screens */
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* Extra Small Devices (Phones, less than 576px) */
+@media (max-width: 576px) {
+  body {
+    font-size: 14px;
+  }
+  .logo {
+    height: 171px;
+  }
+}
+
+/* Small Devices (Phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+  .logo {
+    height: 250px;
+    background-size: cover;
+  }
+  .profile-image {
+    border-radius: 8%;
+    height: 120px;
+    width: 120px;
+    object-fit: cover;
+    border: 3px solid #ffff;
+    margin-top: -83px;
+    background-color: #fff;
+  }
+  .profile-sec{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 0 20px 0 20px;
+  }
+}
+
+/* Medium Devices (Tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 992px) {
+  body {
+    font-size: 18px;
+  }
+  .logo {
+    height: 300px;
+  }
+
+.profile-image {
+  border-radius: 8%;
+  height: 120px;
+  width: 120px;
+  object-fit: cover;
+  border: 3px solid #ffff;
+  margin-top: -83px;
+  background-color: #fff;
+}
+}
+
+/* Large Devices (Desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1200px) {
+  body {
+    font-size: 20px;
+  }
+  .logo {
+    // height: 350px;
+    height:271px;
+  }
+  .profile-image {
+    border-radius: 8%;
+    height: 120px;
+    width: 120px;
+    object-fit: cover;
+    border: 3px solid #ffff;
+    margin-top: -83px;
+    background-color: #fff;
+  }
+}
+
+/* Extra Large Devices (Large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  body {
+    font-size: 22px;
+  }
+  .logo {
+    // height: 400px;
+    height: 350px;
+    background-size: cover;
+  }
+}
+
+/* Ensure no horizontal scroll on all screens */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}

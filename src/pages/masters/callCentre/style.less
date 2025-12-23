@@ -1,0 +1,39 @@
+@import "../../../../src/assets/styles/variable.less";
+
+.pincode-card {
+  border-radius: 8px;
+  border: 1px solid @color_border;
+  background: @color_white;
+  &-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid @color_separator;
+    font-size: 16px;
+    font-weight: 600;
+    color: #242424;
+  }
+  &-body {
+    padding: 14px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    .pincode-chip-container {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .clear-all-btn {
+      color: @color_error;
+      font-weight: 600;
+      &:hover {
+        color: @color_error;
+      }
+    }
+  }
+}
+.pincodes-container {
+  margin-top: 24px;
+}
+.chip-close-icon {
+  cursor: pointer;
+}

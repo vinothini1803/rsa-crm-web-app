@@ -1,0 +1,161 @@
+@import url("../../assets/styles/variable.less");
+
+.checkbox-item {
+  margin-top: 7px;
+  display: flex;
+  gap: 4px;
+  .checkbox-label {
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+.note-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 11px;
+  padding-left: 38px;
+  padding-bottom: 14px;
+
+  align-self: flex-start;
+  font-weight: 500;
+  &-green {
+    div {
+      &::before {
+        content: "\A";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 44px;
+        background: #34a853 !important;
+        margin-right: 15px;
+      }
+    }
+  }
+  div {
+    &::before {
+      content: "\A";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 44px;
+      background: #a06218;
+      margin-right: 15px;
+    }
+  }
+}
+.entilement-title-text,
+.locations-title-text {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.rate-card-container {
+  padding: 5px 14px;
+  border-radius: 16px 16px 0px 0px;
+  background: #fecc3f;
+  transform: rotate(-90deg);
+  position: absolute;
+  right: 0;
+  top: 50%;
+  cursor: pointer;
+  /* bottom: 0; */
+  margin: auto 0;
+  z-index: 1;
+}
+.subject-container {
+  display: flex;
+  gap: 10px;
+}
+
+.resend-container {
+  color: @color_grey;
+  font-weight: 500;
+  margin-left: auto;
+  .time {
+    color: @color_default;
+  }
+}
+.map-card {
+  height: 320px;
+  border: 1px solid @color_separator;
+  border-radius: 8px;
+  position: relative;
+}
+.rate-note-content {
+  font-weight: 500;
+  align-self: center;
+}
+.rate-card-title {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.rate-content-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 19px;
+}
+.rate-card {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid @color_border;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  &-selected {
+    border: 1px solid @color_default;
+  }
+  .rate-type-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 33%;
+  }
+  .rate-container {
+    display: flex;
+    flex-direction: column;
+    width: 33%;
+  }
+  .rate-type-label {
+    font-weight: 600;
+    white-space: wrap;
+  }
+  .rate-label {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .rate-type-title {
+    color: @color_grey;
+
+    font-size: 12px;
+  }
+  .gst-text {
+    font-weight: 500;
+
+    color: #4db86b;
+  }
+}
+
+.rate-card-list-container {
+  padding-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.travelledkm{
+  position: absolute;
+  right: 0;
+  left: 0;
+  bottom: 10px;               
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.accordian-title{
+  
+}

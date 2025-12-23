@@ -1,0 +1,61 @@
+@import url("../../../assets/styles/variable.less");
+
+.role-permission {
+  padding-top: 50px;
+  
+  &-title {
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    line-height: 1.245;
+  }
+  &-subtitle {
+    color: @color_grey;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+  &-tab{
+    border-radius: 8px;
+    border: 1px solid #d5d5d5;
+    background: @color_white;
+  }
+
+}
+.tab-container{
+  display: flex;
+  flex-direction: column;
+  padding: 0px 0px 10px 24px;
+  gap: 1rem;
+}
+
+// permission accordion //
+.accordion {
+  &-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  &-title {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  &-nested-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 5px;
+    padding-top: 5px;
+  }
+}
+
+.search-bar {
+  margin-bottom: 16px;
+}
