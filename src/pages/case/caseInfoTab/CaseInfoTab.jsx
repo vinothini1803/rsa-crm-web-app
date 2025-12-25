@@ -28,7 +28,7 @@ const CaseInfoTab = ({ aspInfo, ticketInfo, caseData, handleAspAssign }) => {
   return (
     <div className="tab-body scroll-hidden">
       <div className="asp-info-container">
-        {aspInfo.length <= 1 ? (
+        {/* {aspInfo.length <= 1 ? (
           <div className="case-info-title">ASP Info</div>
         ) : (
           <div className="asp-tab-header">
@@ -40,8 +40,8 @@ const CaseInfoTab = ({ aspInfo, ticketInfo, caseData, handleAspAssign }) => {
               className="spearate-tab-menu min-none"
             />
           </div>
-        )}
-        <div className="no-assignment-card bg-white border-transparent">
+        )} */}
+        {/* <div className="no-assignment-card bg-white border-transparent">
           {aspInfo?.length > 0 ? (
             <ViewGrid items={aspInfo[activeIndex]} className="grid-3" />
           ) : (
@@ -53,7 +53,7 @@ const CaseInfoTab = ({ aspInfo, ticketInfo, caseData, handleAspAssign }) => {
               disablebtn={caseData?.agentId ? false : true}
             />
           )}
-        </div>
+        </div> */}
       </div>
       <div className="case-info-container">
         <div className="d-flex align-items-center case-info-title gap">

@@ -667,6 +667,12 @@ const BreakDownLocations = ({
 
       const { lat, lng } = getLatLng(results[0]);
       if (field?.name == "breakdownlocation") {
+        setValue("breakdownlocation", {
+          ...value,
+          description: area
+            ? `${value.description}, ${area}`
+            : value.description,
+        });
         setValue("lattiude_longtitude", {
           lat: lat,
           lng: lng,
@@ -697,6 +703,16 @@ const BreakDownLocations = ({
           }
         );
       } else {
+         console.log(
+        "🧪 Final Drop Description:",
+        area ? `${value.description}, ${area}` : value.description
+      );
+        setValue("dropdownlocation", {
+    ...value,
+    description: area
+      ? `${value.description}, ${area}`
+      : value.description,
+  });
         setValue("droplatlng", {
           lat: lat,
           lng: lng,
@@ -1482,9 +1498,11 @@ const BreakDownLocations = ({
                           return <div>{option.description}</div>;
                         }}
                         onChange={(e) => handleChange(e, field)}
-                        onSelect={(e) =>
-                          handleSelect(e.value, field, "breakdown")
-                        }
+                        onSelect={(e) => {
+                          console.log(e.value,"breakdownnnnnn");
+                          handleSelect(e.value, field, "breakdown");
+                        }}
+                       
                         disabled={locationVia?.id !== 493 ? true : false}
                         placeholder="Search places"
                         showEmptyMessage={true}
@@ -1514,6 +1532,7 @@ const BreakDownLocations = ({
               )}
             </div>
           </div>
+
           <div className="col-md-6">
             <div className="form-group">
               <label className="form-label required">Nearest City</label>
@@ -1626,6 +1645,7 @@ const BreakDownLocations = ({
               />
             </div>
           </div>
+
           <div className="col-md-6">
             <div className="form-group">
               <label className="form-label">Breakdown Landmark</label>

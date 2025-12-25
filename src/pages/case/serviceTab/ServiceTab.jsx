@@ -3144,6 +3144,21 @@ const ServiceTab = ({
       }
     );
   };
+  const isAssignAspDisabled = (activityData, caseData, user, id) => {
+    return !(
+      (caseData?.agentId &&
+        user?.role?.id === 3 &&
+        id === caseData?.agentId &&
+        activityData?.agentPickedAt &&
+        [1, 2, 4, 8].includes(activityData?.activityStatusId) &&
+        user?.levelId !== 1045 &&
+        caseData?.caseStatusId === 2) ||
+      (activityData?.activityStatusId === 10 &&
+        !activityData?.customerNeedToPay &&
+        activityData?.aspActivityStatusId === 2 &&
+        caseData?.caseStatusId === 2)
+    );
+  };
 
   return (
     <div className="tab-body scroll-hidden">
@@ -3195,24 +3210,96 @@ const ServiceTab = ({
           onTabChange={(e) => setActiveIndex(e.index)}
         >
           {serviceInfo?.map((aspServiceInfo, i) => (
+            // <AccordionTab
+            //   className="custom-accordian-tab"
+            //   tabIndex={i}
+            //   key={aspServiceInfo?.id}
+            //   headerTemplate={(e) => {
+            //     return (
+            //       <div className="accordian-title d-flex align-items-center gap-2">
+            //         <span>{aspServiceInfo?.title}</span>
+            //         <StatusBadge
+            //           className={"badge-chip"}
+            //           text={aspServiceInfo?.status}
+            //           statusId={aspServiceInfo?.statusId}
+            //           statusType="activityStatus"
+            //         />
+            //         {aspServiceInfo?.code && (
+            //           <Chip
+            //             className="info-chip violet"
+            //             label={aspServiceInfo?.code}
+            //           />
+            //         )}
+            //       </div>
+            //     );
+            //   }}
+            // >
             <AccordionTab
-              className="custom-accordian-tab"
-              tabIndex={i}
               key={aspServiceInfo?.id}
-              headerTemplate={(e) => {
+              className="custom-accordian-tab"
+              headerTemplate={() => {
+                const aspData = aspResultData[i];
+
                 return (
-                  <div className="accordian-title d-flex align-items-center gap-2">
-                    <span>{aspServiceInfo?.title}</span>
+                  <div className="accordian-title d-flex align-items-center gap-2 flex-wrap">
+                    {/* Service Title */}
+                    <span className="service-title">
+                      {aspServiceInfo?.title}
+                    </span>
+
+                    {/* Status Badge */}
                     <StatusBadge
-                      className={"badge-chip"}
+                      className="badge-chip"
                       text={aspServiceInfo?.status}
                       statusId={aspServiceInfo?.statusId}
                       statusType="activityStatus"
                     />
+
+                    {/* Service Code */}
                     {aspServiceInfo?.code && (
                       <Chip
                         className="info-chip violet"
                         label={aspServiceInfo?.code}
+                      />
+                    )}
+
+                    {/* PICK SERVICE */}
+                    {!aspData?.agentPickedAt &&
+                      caseData?.caseStatusId === 2 &&
+                      permissions?.includes("pick-service-web") &&
+                      id === caseData?.agentId &&
+                      aspData?.activityStatusId !== 8 && (
+                        <Button
+                          label="Pick Service"
+                          className="p-button-link p-0"
+                          style={{
+                            color: "#007bff",
+                            // fontWeight: "bold",
+                          }}
+                          onClick={() => setPickTimeConfirmDialog(true)}
+                          disabled={user?.levelId == 1045}
+                        />
+                      )}
+
+                    {/* PICKED TIME */}
+                    {aspData?.agentPickedAt && (
+                      <span className="picked-time-text">
+                        Picked at {aspData.agentPickedAt}
+                      </span>
+                    )}
+
+                    {/* ASSIGN ASP */}
+                    {aspData?.agentPickedAt && !aspData?.asp && (
+                      <Button
+                        label="Assign ASP"
+                        className="p-button-outlined p-button-sm assign-asp-btn"
+                        onClick={() => handleAspAssign(aspData?.activityId)}
+                        disabled={isAssignAspDisabled(
+                          aspData,
+                          caseData,
+                          user,
+                          id
+                        )}
                       />
                     )}
                   </div>

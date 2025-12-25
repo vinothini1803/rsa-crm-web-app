@@ -365,6 +365,12 @@ const CaseView = () => {
       const state = stateComponent ? stateComponent?.short_name : "";
       const { lat, lng } = getLatLng(results[0]);
       if (type === "breakdown" || field?.name == "breakdownlocation") {
+          setBdValue("breakdownlocation", {
+          ...value,
+          description: area
+            ? `${value.description}, ${area}`
+            : value.description,
+        });
         setBdValue("lattiude_longtitude", {
           lat: lat,
           lng: lng,
@@ -402,6 +408,12 @@ const CaseView = () => {
           }
         );
       } else {
+          setDropValue("dropdownlocation", {
+    ...value,
+    description: area
+      ? `${value.description}, ${area}`
+      : value.description,
+  });
         setDropValue("droplatlng", {
           lat: lat,
           lng: lng,
@@ -818,6 +830,7 @@ const CaseView = () => {
       ),
     },
     { label: <TabMenuItem label="Services" /> },
+    { label: <TabMenuItem label="Cancelled" /> },
   ];
   // console.log("case view", caseViewData?.data?.data)
   const { data: latestPositiveActivity } = useQuery(
@@ -994,83 +1007,84 @@ const CaseView = () => {
   const AspInfo =
     aspResultData?.length > 0
       ? aspResultData?.map((aspResult) => {
-          return [
-            {
-              label: "Activity Status",
-              badge: aspResult?.data?.data?.data[0]?.activityStatus,
-              statusId: aspResult?.data?.data?.data[0]?.activityStatusId,
-              statusType: "activityStatus",
-              /* ...((userTypeId == 141 &&
-          (caseViewData?.data?.data[0]?.caseStatusId == 1 ||
-            caseViewData?.data?.data[0]?.caseStatusId == 2) && //activity cancel---> Agent
-          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(
-            asp?.activityAppStatusId
-          ) &&
-          [2, 3, 9, 10].includes(asp?.activityStatusId)) ||
-          (userTypeId == 140 &&
-            (caseViewData?.data?.data[0]?.caseStatusId == 1 ||
-              caseViewData?.data?.data[0]?.caseStatusId == 2) && //activity cancel---> Dealer
-            [1, 2, 3].includes(asp?.activityAppStatusId) &&
-            [2, 9, 10].includes(asp?.activityStatusId))
-          ? {
-            action: <span className="remove-text"> Cancel</span>,
-            actionClick: () => setCancelVisible(true),
-          }
-          : {}), */
-            },
-            {
-              label: "ASP Activity Status",
-              value: aspResult?.data?.data?.data[0]?.aspActivityStatus || "--",
-            },
-            {
-              label: "ASP Workshop Name",
-              value: aspResult?.data?.data?.data[0]?.asp?.workshopName,
-            },
-            {
-              label: "ASP Code",
-              value: aspResult?.data?.data?.data[0]?.asp?.code,
-              vlaueClassName: "info-badge info-badge-purple",
-            },
-            {
-              label: "Driver Name",
-              value: aspResult?.data?.data?.data[0]?.aspMechanic?.name || "--",
-              // action: "Edit"
-            },
-            {
-              label: "Driver Contact",
-              value:
-                aspResult?.data?.data?.data[0]?.aspMechanic?.contactNumber ||
-                "--",
-              vlaueClassName: aspResult?.data?.data?.data[0]?.aspMechanic
-                ?.contactNumber
-                ? "info-badge info-badge-yellow"
-                : "",
-              ...(aspResult?.data?.data?.data[0]?.aspMechanic
-                ?.contactNumber && {
-                btnLink: "Call",
-                //btnLinkAction: () => handleOutBoundCall(),
-              }),
-            },
-            /* {
-        label: (
-          <div className="d-flex align-items-center">
-            ETA <img className={"eta-info-image"} src={InfoDarkIcon} />
-          </div>
-        ),
-        value: "10 (min)",
-        vlaueClassName: "info-badge info-badge-yellow",
-      },
-      {
-        label: "Comment by ASP",
-        value: "Starting to BD in 5 mins",
+        return []
+      //     return [
+      //       {
+      //         label: "Activity Status",
+      //         badge: aspResult?.data?.data?.data[0]?.activityStatus,
+      //         statusId: aspResult?.data?.data?.data[0]?.activityStatusId,
+      //         statusType: "activityStatus",
+      //         /* ...((userTypeId == 141 &&
+      //     (caseViewData?.data?.data[0]?.caseStatusId == 1 ||
+      //       caseViewData?.data?.data[0]?.caseStatusId == 2) && //activity cancel---> Agent
+      //     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(
+      //       asp?.activityAppStatusId
+      //     ) &&
+      //     [2, 3, 9, 10].includes(asp?.activityStatusId)) ||
+      //     (userTypeId == 140 &&
+      //       (caseViewData?.data?.data[0]?.caseStatusId == 1 ||
+      //         caseViewData?.data?.data[0]?.caseStatusId == 2) && //activity cancel---> Dealer
+      //       [1, 2, 3].includes(asp?.activityAppStatusId) &&
+      //       [2, 9, 10].includes(asp?.activityStatusId))
+      //     ? {
+      //       action: <span className="remove-text"> Cancel</span>,
+      //       actionClick: () => setCancelVisible(true),
+      //     }
+      //     : {}), */
+      //       },
+      //       {
+      //         label: "ASP Activity Status",
+      //         value: aspResult?.data?.data?.data[0]?.aspActivityStatus || "--",
+      //       },
+      //       {
+      //         label: "ASP Workshop Name",
+      //         value: aspResult?.data?.data?.data[0]?.asp?.workshopName,
+      //       },
+      //       {
+      //         label: "ASP Code",
+      //         value: aspResult?.data?.data?.data[0]?.asp?.code,
+      //         vlaueClassName: "info-badge info-badge-purple",
+      //       },
+      //       {
+      //         label: "Driver Name",
+      //         value: aspResult?.data?.data?.data[0]?.aspMechanic?.name || "--",
+      //         // action: "Edit"
+      //       },
+      //       {
+      //         label: "Driver Contact",
+      //         value:
+      //           aspResult?.data?.data?.data[0]?.aspMechanic?.contactNumber ||
+      //           "--",
+      //         vlaueClassName: aspResult?.data?.data?.data[0]?.aspMechanic
+      //           ?.contactNumber
+      //           ? "info-badge info-badge-yellow"
+      //           : "",
+      //         ...(aspResult?.data?.data?.data[0]?.aspMechanic
+      //           ?.contactNumber && {
+      //           btnLink: "Call",
+      //           //btnLinkAction: () => handleOutBoundCall(),
+      //         }),
+      //       },
+      //       /* {
+      //   label: (
+      //     <div className="d-flex align-items-center">
+      //       ETA <img className={"eta-info-image"} src={InfoDarkIcon} />
+      //     </div>
+      //   ),
+      //   value: "10 (min)",
+      //   vlaueClassName: "info-badge info-badge-yellow",
+      // },
+      // {
+      //   label: "Comment by ASP",
+      //   value: "Starting to BD in 5 mins",
         
-      }, */
-            {
-              label: "Service",
-              value: aspResult?.data?.data?.data[0]?.service || "--",
-              vlaueClassName: "info-badge info-badge-blue",
-            },
-          ];
+      // }, */
+      //       {
+      //         label: "Service",
+      //         value: aspResult?.data?.data?.data[0]?.service || "--",
+      //         vlaueClassName: "info-badge info-badge-blue",
+      //       },
+      //     ];
         })
       : [];
 
@@ -1632,11 +1646,13 @@ const CaseView = () => {
                   <TabPanel>
                     <ActivityTab caseData={caseViewData?.data?.data[0]} />
                   </TabPanel>
-                  <TabPanel>
+                  {/* <TabPanel>
                     <ServiceTab
                       aspResultData={
                         aspResultData
                           ? aspResultData?.map((aspInfo) => {
+                            console.log(aspInfo?.data?.data?.data[0],"aspinforrrr");
+                            
                               return aspInfo?.data?.data?.data[0];
                             })
                           : []
@@ -1647,6 +1663,82 @@ const CaseView = () => {
                       handleAspAssign={handleAspAssign}
                       setServiceVisible={setServiceVisible}
                       caseViewData={caseViewData}
+                    />
+                  </TabPanel> */}
+                  <TabPanel>
+                    <ServiceTab
+                      aspResultData={
+                        aspResultData
+                          ? aspResultData
+                              .map((aspInfo) => aspInfo?.data?.data?.data[0])
+                              .filter(
+                                (activity) =>
+                                  activity &&
+                                  activity.activityStatusId !== 4 && // Cancelled
+                                  
+                                  activity.aspActivityStatusId !== 10
+                              )
+                          : []
+                      }
+                      caseData={caseViewData?.data?.data[0]}
+                      aspRefetch={aspResultData}
+                      caseDetailrefetch={caseViewRefetch}
+                      handleAspAssign={handleAspAssign}
+                      setServiceVisible={setServiceVisible}
+                      caseViewData={caseViewData}
+                    />
+                  </TabPanel>
+                  <TabPanel>
+                    <ServiceTab
+                      aspResultData={
+                        aspResultData
+                          ? aspResultData
+                              .map((aspInfo, index) => {
+                                const activity = aspInfo?.data?.data?.data[0];
+
+                                console.log("RAW ASP INFO:", index, aspInfo);
+                                console.log(
+                                  "EXTRACTED ACTIVITY:",
+                                  index,
+                                  activity
+                                );
+                                console.log(
+                                  "activityStatusId:",
+                                  activity?.activityStatusId
+                                );
+                                console.log(
+                                  "aspActivityStatusId:",
+                                  activity?.aspActivityStatusId
+                                );
+                                console.log(
+                                  "activityStatus:",
+                                  activity?.activityStatus
+                                );
+
+                                return activity;
+                              })
+                              .filter((activity) => {
+                                const isCancelled =
+                                  activity?.activityStatusId === 4 ||
+                                  activity?.aspActivityStatusId === 10;
+
+                                console.log(
+                                  "FILTER CHECK:",
+                                  activity?.activityId,
+                                  isCancelled
+                                );
+
+                                return isCancelled;
+                              })
+                          : []
+                      }
+                      caseData={caseViewData?.data?.data[0]}
+                      aspRefetch={aspResultData}
+                      caseDetailrefetch={caseViewRefetch}
+                      handleAspAssign={handleAspAssign}
+                      setServiceVisible={setServiceVisible}
+                      caseViewData={caseViewData}
+                      isCancelledTab={true}
                     />
                   </TabPanel>
                 </TabView>
