@@ -620,6 +620,7 @@ const CaseInfoCard = ({
         component.types.includes("postal_code")
       );
       const area = areaComponent ? areaComponent.long_name : "";
+       console.log("📌 Extracted Pincode (area):", area);
       const stateComponent = addressComponents.find((component) =>
         component.types.includes("administrative_area_level_1")
       );
@@ -627,6 +628,12 @@ const CaseInfoCard = ({
       const { lat, lng } = getLatLng(results[0]);
       if (field?.name == "breakdownlocation") {
         // console.log("lat", lat, lng);
+          setBdValue("breakdownlocation", {
+          ...value,
+          description: area
+            ? `${value.description}, ${area}`
+            : value.description,
+        });
         setBdValue("lattiude_longtitude", {
           lat: lat,
           lng: lng,
@@ -654,10 +661,20 @@ const CaseInfoCard = ({
           }
         );
       } else {
+          console.log(
+        "🧪 Final Drop Description:",
+        area ? `${value.description}, ${area}` : value.description
+      );
+         setValue("dropdownlocation", {
+    ...value,
+    description: area
+      ? `${value.description}, ${area}`
+      : value.description,
+  });
         setValue("droplatlng", {
           lat: lat,
           lng: lng,
-        });
+        }); 
         setValue("dropnearest_city", city);
         getCityIdMutate(
           {
