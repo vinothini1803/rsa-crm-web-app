@@ -157,7 +157,9 @@ const AcceptServiceRequestDialog = ({
                       //   field.onChange(value);
                       //   resetField("endDatetime");
                       // }}
-
+                      // manualInput={true}
+                      //  touchUI={false} 
+                      // appendTo={document.body}  
                       onChange={(e) => {
                         const selectedDate = new Date(e.value);
                         const roundedDate = roundUpToNext15(selectedDate);
@@ -193,6 +195,7 @@ const AcceptServiceRequestDialog = ({
                 render={({ field, fieldState }) => (
                   <>
                     <Calendar
+                    
                       inputId={field.name}
                       value={field.value}
                       dateFormat="dd-mm-yy"
@@ -202,6 +205,7 @@ const AcceptServiceRequestDialog = ({
                       iconPos={"left"}
                       showTime
                       // hourFormat="12"
+                      
                       hourFormat="24"
                       placeholder="Select Date"
                       minDate={selectedStartDate}
