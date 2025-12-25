@@ -976,6 +976,8 @@ const ServiceTab = ({
         ...(activityData?.isReimbursement ||
         !activityData?.subServiceHasAspAssignment
           ? []
+          : activityData?.activityStatusId === 4
+  ? []  
           : caseData?.agentId &&
             activityData?.agentPickedAt &&
             [2, 4].includes(caseData?.caseStatusId) &&
