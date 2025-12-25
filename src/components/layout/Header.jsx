@@ -400,31 +400,62 @@ const Header = () => {
                   {caseDetailData?.data?.data[0]?.caseNumber}
                 </span>
               </div>
-              <div className="delivery-request-detail">
+              <div className="delivery-request-detail" >
+                 <div>
+                  <div className="delivery-request-label">
+    Case Details
+  </div>
+  
                 <div className="delivery-request-name">
                   <img src={SpannerImage} alt="spanner_icon" />
                   <span>
                     {caseDetailData?.data?.data[0]?.caseSubject} -{" "}
                     {activityData?.data?.data[0]?.subService}
                   </span>
-                </div>
-
+                </div></div>
+<div>
+                  <div className="delivery-request-label">
+    Date and time
+  </div>
+  
                 <div className="delivery-request-name">
                   <img src={CalendarViewIcon} alt={"calendar-icon"} />
                   <span>{caseDetailData?.data?.data[0]?.createdAt} </span>
-                </div>
+                </div></div>
+                <div>
+                   <div className="delivery-request-label">
+    Vehicle Brand
+  </div>
                 <div className="delivery-request-name">
                   <img src={VehicleGreyIcon} alt={"milestone-icon"} />
-                  <span>{caseDetailData?.data?.data[0]?.vehicleMake}</span>
+                  <span>{caseDetailData?.data?.data[0]?.vehicleMake} ,
+                    {caseDetailData?.data?.data[0]?.vehicleModel}
+                     </span>
+</div></div>
+<div>
+                   <div className="delivery-request-label">
+   Vin
+  </div>
+ <div className="delivery-request-name">
                   <span className="vehicle-detail">
                     {caseDetailData?.data?.data[0]?.vin}
-                  </span>
-                  <span className="vehicle-detail">
-                    {caseDetailData?.data?.data[0]?.vehicleModel}
-                  </span>
+                  </span></div></div>
+                    {/* <div>
+                    <div className="delivery-request-label">
+    Model
+    </div>
+  <div className="delivery-request-name">
+                    <span className="vehicle-detail">
+                      {caseDetailData?.data?.data[0]?.vehicleModel}
+                    </span></div></div> */}
+                  <div>
+                   <div className="delivery-request-label">
+   Vehicle Type
+  </div>
+ <div className="delivery-request-name">
                   <span className="vehicle-detail">
                     {caseDetailData?.data?.data[0]?.vehicleType}
-                  </span>
+                  </span></div>
                 </div>
               </div>
             </>
