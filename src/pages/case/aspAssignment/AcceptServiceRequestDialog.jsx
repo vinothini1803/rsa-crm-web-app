@@ -10,6 +10,11 @@ import {
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Calendar } from "primereact/calendar";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+
 import { Button } from "primereact/button";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
@@ -135,7 +140,7 @@ const AcceptServiceRequestDialog = ({
               <label className="form-label required">
                 Expected Start Date & Time
               </label>
-              <Controller
+              {/* <Controller
                 name="startDatetime"
                 control={control}
                 rules={{ required: "Start Date is required." }}
@@ -174,7 +179,42 @@ const AcceptServiceRequestDialog = ({
                     </div>
                   </>
                 )}
-              />
+              /> */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+  <Controller
+    name="startDatetime"
+    control={control}
+    rules={{ required: "Start Date is required." }}
+    render={({ field, fieldState }) => (
+      <DateTimePicker
+        label="Expected Start Date & Time"
+        value={field.value ? dayjs(field.value) : null}
+        minDateTime={dayjs()}
+        onChange={(newValue) => {
+          if (!newValue) return;
+
+          // Round to next 15 mins
+          const minutes = newValue.minute();
+          const remainder = minutes % 15;
+          const rounded = remainder === 0
+            ? newValue
+            : newValue.add(15 - remainder, "minute");
+
+          field.onChange(rounded.toDate());
+          resetField("endDatetime");
+        }}
+        slotProps={{
+          textField: {
+            fullWidth: true,
+            error: !!fieldState.error,
+            helperText: fieldState.error?.message,
+          },
+        }}
+      />
+    )}
+  />
+</LocalizationProvider>
+
             </div>
           </div>
           <div className="col-md-6">
