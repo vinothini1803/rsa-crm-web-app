@@ -28,7 +28,14 @@ import {
   StartLocation,
   EndLocation,
   FileBaseUrl,
+   CalendarTimeIcon,
 } from "../../../utills/imgConstants";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import dayjs from "dayjs";
+
+import TextField from "@mui/material/TextField";
 import { TabPanel, TabView } from "primereact/tabview";
 import { TabMenu } from "primereact/tabmenu";
 import { Dialog } from "primereact/dialog";
@@ -39,8 +46,10 @@ import { RadioButton } from "primereact/radiobutton";
 import { FileUpload } from "primereact/fileupload";
 import { Dropdown } from "primereact/dropdown";
 import { Chip } from "primereact/chip";
+import { Menu } from "primereact/menu";
+
 import { OverlayPanel } from "primereact/overlaypanel";
-import { useNavigate } from "react-router";
+import { json, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import TabMenuItem from "../../../components/common/TabMenuItem";
@@ -56,7 +65,7 @@ import ReminderSidebar from "../../../components/common/ReminderSidebar";
 import ChangeActivityDialog from "../../../components/common/ChangeActivityDialog";
 import InterActionSidebar from "../../../components/common/InterActionSidebar";
 import InitiateCancellationDialog from "./InitiateCancellationDialog";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm,useFieldArray, useWatch } from "react-hook-form";
 import SelectableButtons from "./SelectableButtons";
 import { clickToCall } from "../../../../services/callService";
 import { toast } from "react-toastify";
@@ -73,6 +82,7 @@ import {
 import {
   getInteractiondata,
   addInteraction,
+    updateActualKM,
 } from "../../../../services/deliveryRequestViewService";
 import {
   getReminderFormData,
@@ -80,7 +90,7 @@ import {
 } from "../../../../services/reminderService";
 import { aspCancel } from "../../../../services/assignServiceProvider";
 import { updateActivityVehicleNumber } from "../../../../services/assignServiceProvider";
-import { assignDriver } from "../../../../services/assignServiceProvider";
+import { assignDriver,updateActivityCharge } from "../../../../services/assignServiceProvider";
 import {
   getAspActivityStatuses,
   sendCustomerInvoice,
@@ -124,9 +134,22 @@ const ServiceTab = ({
   handleAspAssign,
   setServiceVisible,
   caseViewData,
+
 }) => {
+  console.log(aspResultData,'ki');
+  const activityDetail = aspResultData;
   const { userTypeId, id, entityId, role } = useSelector(CurrentUser);
   const user = useSelector(CurrentUser);
+    const kmpanel = useRef(null);
+     const AddChargePanel = useRef(null);
+      const cusChargesView = useRef(null);
+    const chargePanel = useRef(null);
+      const AddChargeMenu = useRef(null);
+      const [items, setItems] = useState();
+        const [selectedOptionCustomer, setSelectedOptionCustomer] = useState([]);
+      
+      const [itemsCusCharges, setItemsCusCharges] = useState();
+      const [selectedOption, setSelectedOption] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [visible, setVisible] = useState(false);
   const [interactionDialogeVisible, setInteractionDialogeVisible] =
@@ -196,7 +219,47 @@ const ServiceTab = ({
   const handleChangeActivity = () => {
     setActivityDialogVisible(true);
   };
+  const [isKmSubmitting, setIsKmSubmitting] = useState(false);
+  // console.log("ServiceCostTab activityDetail", activityDetail, user?.code);
+ 
+  
 
+  const { mutate, } = useMutation(updateActualKM);
+   const {
+      mutate: addChargeMutate,
+      isLoading: addChargeLoading,
+      data: chargesData,
+    } = useMutation(updateActivityCharge);
+    const {
+      control: cusChargeControl,
+      formState: { errors: errorsCusCharge },
+      handleSubmit: handleCusChargeSubmit,
+      reset: cusChargeReset,
+      resetField,
+      setValue: setCusChargeValue,
+    } = useForm();
+  
+    const {
+      fields: cusChargeFields,
+      remove: cusChargeRemove,
+      append: cusChargeAppend,
+    } = useFieldArray({
+      control: cusChargeControl,
+      name: "chargesData",
+    });
+   const {
+      handleSubmit,
+      control,
+      setValue: setChargeValue,
+      // formState: { errors },
+    } = useForm();
+  //KM Form
+  const {
+    handleSubmit: handleKMSubmit,
+    setValue,
+    control: kmControl,
+    formState: kmFormState,
+  } = useForm();
   const {
     handleSubmit: handleCancelSubmit,
     control: controlCancel,
@@ -237,7 +300,10 @@ const ServiceTab = ({
     setValue: setCustomerInvoiceValue,
     formState: { errors: CustomerInvoiceErrors },
   } = useForm({});
-
+const { fields, remove, append } = useFieldArray({
+    control,
+    name: "chargesData",
+  });  
   const {
     handleSubmit: handleOthersFormSubmit,
     control: controlRemarksStatus,
@@ -297,7 +363,7 @@ const ServiceTab = ({
     isLoading: updateVehicleNumberIsLoading,
   } = useMutation(updateActivityVehicleNumber);
 
-  // Get Interaction Form Data
+ 
   const { data: interactionFormData } = useQuery(
     ["caseInteractionFormData"],
     () => getInteractiondata(),
@@ -324,7 +390,251 @@ const ServiceTab = ({
       enabled: reminderDialogeVisible,
     }
   );
+  const handleKMFormSubmit = (values) => {
+  if (isKmSubmitting) return;
 
+  setIsKmSubmitting(true);
+
+  const inputDateString = values?.aspWaitingTime
+    ? moment(values?.aspWaitingTime)
+    : undefined;
+
+  const startOfDayMoment = inputDateString?.clone().startOf("day");
+
+  mutate(
+    {
+      activityId: activityDetail[0]?.activityId,
+      caseDetailId: activityDetail[0]?.caseDetail?.id,
+      aspId: activityDetail[0]?.asp?.id,
+      aspCode: activityDetail[0]?.asp?.code,
+      clientId: activityDetail[0]?.caseDetail?.clientId,
+      totalKm: String(values?.totalKm),
+      totalKmReason: values?.totalKmReason || "",
+      subServiceId: activityDetail[0]?.caseDetail?.subServiceId,
+      subServiceName: activityDetail[0]?.caseDetail?.subService,
+      createdDate: activityDetail[0]?.caseDetail?.createdDate,
+      caseTypeId: activityDetail[0]?.caseDetail?.typeId,
+      logTypeId: 240,
+      isAspAcceptedCcDetail: 1,
+      aspWaitingTimeInMinutes:
+        inputDateString && values?.aspWaitingTime
+          ? inputDateString.diff(startOfDayMoment, "minutes")
+          : null,
+    },
+    {
+      onSuccess: (res) => {
+        if (res?.data?.success) {
+          kmpanel.current.hide();
+          toast.success(res?.data?.message);
+          aspRefetch?.refetch();
+          caseDetailrefetch();
+        } else {
+          toast.error(res?.data?.error || "Something went wrong");
+        }
+        setIsKmSubmitting(false);
+      },
+    }
+  );
+};
+
+   const validatePositiveNumber = (value) => {
+    if (value > 0) {
+      return true;
+    }
+    return "Please enter a KM greater than 0";
+  };
+
+
+    //append Customer charges
+    const handleCusSelectedOptions = ({ originalEvent, item }) => {
+      // console.log("handleSelectedOptions", item);
+      cusChargeAppend({ amount: "" });
+      setSelectedOptionCustomer((prev) => [
+        ...prev,
+        { key: item.key, label: item.label, name: item.name },
+      ]);
+      // console.log("selected item", item);
+  
+      // console.log(
+      //   "handleSelectedOptions items",
+      //   itemsCusCharges?.filter((menu) => menu.key !== item.key)
+      // );
+  
+      setItemsCusCharges((prev) => prev?.filter((el) => item.key !== el.key));
+    };
+  
+    //Customer Charges Add Edit
+    const handleCusAddEditCharge = (e, type) => {
+      AddChargePanel.current.show(e);
+      if (type == "Edit") {
+        // console.log("edit mode");
+        //To Add Dynamic Field on Edit
+        setSelectedOptionCustomer(
+          activityDetail?.chargesDetail
+            ?.filter((charge) => charge.typeId == 152)
+            ?.map((chargeData) => {
+              return {
+                key: Number(chargeData.chargeId),
+                label: chargeData.chargeName,
+                name: chargeData.chargeName,
+              };
+            })
+        );
+        //To Fill Field on Edit Charges
+        setCusChargeValue(
+          "chargesData",
+          activityDetail?.chargesDetail
+            ?.filter((charge) => charge.typeId == 152)
+            ?.map((element, i) => {
+              return { amount: element?.amount };
+            })
+        );
+  
+        //To set for chargees Menu on Edit
+        setItemsCusCharges(
+          customerChargeList?.data?.data
+            ?.filter(
+              (el) =>
+                !activityDetail?.chargesDetail
+                  ?.filter((charge) => charge.typeId == 152)
+                  ?.some((charge) => el.id == charge?.chargeId)
+            )
+            ?.map((charge) => {
+              return {
+                key: Number(charge.id),
+                label: charge.name,
+                name: charge.name,
+                command: handleCusSelectedOptions,
+              };
+            })
+        );
+      }
+    };
+    /* Cancel charge function*/
+    const handleCusCancelCharge = () => {
+      AddChargePanel.current.hide();
+      setSelectedOptionCustomer([]);
+      setItemsCusCharges(
+        customerChargeList?.data?.data?.map((item) => {
+          return {
+            key: Number(item.id),
+            label: item.name,
+            name: item.name,
+            command: handleCusSelectedOptions,
+          };
+        })
+      );
+      cusChargeReset({
+        chargesData: [],
+      });
+    };
+  
+    const handleCusChargeRemove = (e, item, i) => {
+      cusChargeRemove(i); //To remove from Field array
+      // console.log("Removed Item => ", item);
+      const removeoption = selectedOptionCustomer.filter(
+        (option) => option?.key !== item?.key
+      );
+      // console.log("removeoption", removeoption);
+      setSelectedOptionCustomer(removeoption);
+      // setItemsCusCharges([
+      //   {
+      //     key: item?.key,
+      //     label: item?.label,
+      //     name: item?.name,
+      //     command: handleSelectedOptions,
+      //   },
+      //   ...itemsCusCharges,
+      // ]);
+      setItemsCusCharges((prev) => [
+        ...prev,
+        {
+          key: item?.key,
+          label: item?.label,
+          name: item?.name,
+          command: handleCusSelectedOptions,
+        },
+      ]);
+    };
+    // console.log("items", itemsCusCharges);
+  
+    const handleCustomerChargeSubmit = (values) => {
+      // console.log("charge submit values++", values, activityDetail?.asp?.id);
+      if (values) {
+        addChargeMutate(
+          {
+            ...values,
+            chargesData: values?.chargesData?.map((data, i) => {
+              return {
+                ...data,
+                chargeId: selectedOptionCustomer[i].key,
+              };
+            }),
+            totalAdditionalCharges: String(
+              values?.chargesData?.reduce((a, item) => {
+                return Number(item.amount) + a;
+              }, 0)
+            ),
+            activityId: activityDetail?.activityId,
+            aspId: activityDetail?.asp?.id,
+            typeId: 152,
+            logTypeId: 240,
+          },
+          {
+            onSuccess: (res) => {
+              // console.log("response", res?.data.chargesData);
+  
+              if (res?.data?.success) {
+                toast.success(res?.data?.message);
+                aspRefetch?.refetch();
+                AddChargePanel.current.hide();
+  
+                if (activityDetail?.actualTotalKm) {
+                  mutate(
+                    {
+                      activityId: activityDetail?.activityId,
+                      aspId: activityDetail?.asp?.id,
+                      aspCode: activityDetail?.asp?.code,
+                      clientId: activityDetail?.caseDetail?.clientId,
+                      totalKmReason: activityDetail?.actualTotalKmReason
+                        ? activityDetail?.actualTotalKmReason
+                        : "",
+                      totalKm: activityDetail?.actualTotalKm,
+                      subServiceId: activityDetail?.caseDetail?.subServiceId,
+                      subServiceName: activityDetail?.caseDetail?.subService,
+                      createdDate: activityDetail?.caseDetail?.createdDate,
+                      caseTypeId: activityDetail?.caseDetail?.typeId,
+                      logTypeId: 240,
+                      isAspAcceptedCcDetail:
+                        activityDetail?.isAspAcceptedCcDetail == true ? 1 : 0,
+                      ...(activityDetail?.aspWaitingTime && {
+                        aspWaitingTimeInMinutes: activityDetail?.aspWaitingTime,
+                      }),
+                    },
+                    {
+                      onSuccess: (res) => {
+                        if (res?.data?.success == false) {
+                          if (res?.data?.error) {
+                            toast.error(res?.data?.error);
+                          } else {
+                            res?.data?.errors?.forEach((err) => toast.error(err));
+                          }
+                        }
+                      },
+                    }
+                  );
+                }
+              } else {
+                toast.error(res?.data?.error);
+              }
+            },
+          }
+        );
+      }
+    };
+    let chargeDetails = activityDetail?.chargesDetail?.filter(
+    (charge) => charge.typeId == 152
+  );
   // console.log("reminderFormData", reminderFormData);
 
   //Payment Link expiry check
@@ -815,6 +1125,7 @@ const ServiceTab = ({
   };
 
   const serviceInfo = aspResultData?.map((activityData) => {
+    console.log("Activity Data:", activityData);
     const digitalInventorAttachment =
       activityData?.digitalInventoryAttachments?.filter(
         (item) => item.attachmentTypeId === 616
@@ -1211,6 +1522,105 @@ const ServiceTab = ({
               },
             ]
           : []),
+     ...(activityData?.actualTotalKm ||
+  (user?.userTypeId == 141 &&
+    caseData?.caseStatusId == 2 &&
+    user?.levelId != 1045 &&
+    user?.id == caseData?.agentId)
+  ? [
+      {
+        label: "Actual KM",
+        value: activityData?.actualTotalKm
+          ? `${activityData?.actualTotalKm} KM`
+          : "--",
+
+        action:
+          !activityData?.actualTotalKm &&
+          ((activityData?.activityStatusId == 4 &&
+            activityData?.financeStatusId == 2) ||
+            activityData?.aspEndServiceAt) ? (
+            <span
+              className="text-blue text-decoration-underline"
+              onClick={(e) => kmpanel.current.show(e)}
+            >
+              Add KM
+            </span>
+          ) : activityData?.actualTotalKm &&
+            [13, 11, 12, 7].includes(activityData?.activityStatusId) ? (
+            <span
+              className="text-blue text-decoration-underline"
+              onClick={(e) => {
+                kmpanel.current.show(e);
+                setValue("totalKm", Number(activityData?.actualTotalKm));
+                setValue("totalKmReason", activityData?.actualTotalKmReason);
+
+                if (activityData?.aspWaitingTime) {
+                  const base = moment().startOf("day");
+                  setValue(
+                    "aspWaitingTime",
+                    base.add(activityData?.aspWaitingTime, "minutes").toDate()
+                  );
+                }
+              }}
+            >
+              Edit KM
+            </span>
+          ) : null,
+      },
+    ]
+  : []),
+...(activityData?.customerNeedToPay &&
+  activityData?.advancePaymentMethodId === 1069 &&
+  ((activityData?.activityAppStatusId === 15 &&
+    activityData?.activityStatusId === 3) ||
+    [13, 11, 12, 7].includes(activityData?.activityStatusId))
+  ? [
+      {
+        label: "Charges Collected",
+        value: activityData?.chargesDetail?.length ? (
+          <CurrencyFormat
+            amount={activityData.chargesDetail.reduce(
+              (total, charge) => total + Number(charge.amount),
+              0
+            )}
+          />
+        ) : (
+          "--"
+        ),
+
+        action:
+          activityData?.chargesDetail?.length > 0 ? (
+            <span
+              className="text-blue text-decoration-underline"
+              onClick={(e) => cusChargesView.current.toggle(e)}
+            >
+              View
+            </span>
+          ) : (
+            user?.userTypeId === 141 &&
+            caseStatusId === 2 &&
+            user?.id === caseData?.agentId &&
+            user?.levelId !== 1045 &&
+            ((activityData?.activityAppStatusId === 15 &&
+              activityData?.activityStatusId === 3) ||
+              [13, 11, 12, 7].includes(activityData?.activityStatusId)) && (
+              <span
+                className="text-blue text-decoration-underline"
+                onClick={(e) => AddChargePanel.current.toggle(e)}
+              >
+                Add Charges
+              </span>
+            )
+          ),
+      },
+    ]
+  : [])
+,
+
+
+ 
+
+
 
         /* ...(activityData?.hasTrackingLink ? [
             {
@@ -3572,7 +3982,47 @@ const ServiceTab = ({
                   <label className="form-label required">
                     Select Date and Time
                   </label>
-                  <Controller
+                 <LocalizationProvider dateAdapter={AdapterDayjs}>
+  <Controller
+    name="dateTime"
+    control={controlActivityStatus}
+    rules={{ required: "Date and Time is required." }}
+    render={({ field }) => (
+      <DateTimePicker
+        value={field.value ? dayjs(field.value) : null}
+        onChange={(newValue) => {
+          field.onChange(newValue ? newValue.toDate() : null);
+        }}
+        maxDateTime={dayjs()}   // ✅ must also be dayjs
+        ampm
+        slotProps={{
+          textField: {
+            size: "small",   
+            placeholder: "Select Date and Time",
+            error: !!ActivityStatusErrors?.dateTime,
+            helperText: ActivityStatusErrors?.dateTime?.message,
+            fullWidth: true,
+             sx: {
+              "& .MuiInputBase-root": {
+                height: 26,
+                 fontSize: "10px",
+                borderRadius:'2px'      
+              },
+              "& .MuiInputBase-input": {
+                padding: "8px 10px",  
+                fontSize: "10px",
+                borderRadius:'2px'
+              },
+            },
+          },
+        }}
+      />
+    )}
+  />
+</LocalizationProvider>
+
+
+                  {/* <Controller
                     name="dateTime"
                     control={controlActivityStatus}
                     rules={{ required: "Date and Time is required." }}
@@ -3611,7 +4061,7 @@ const ServiceTab = ({
                         </div>
                       </>
                     )}
-                  />
+                  /> */}
                 </div>
               </div>
 
@@ -4865,6 +5315,248 @@ const ServiceTab = ({
           )}
         </div>
       </Dialog>
+          <OverlayPanel ref={kmpanel} className="form-overlay-panel">
+              <div className="cost-overlay-header">Travelled KM</div>
+              <form onSubmit={handleKMSubmit(handleKMFormSubmit)}>
+                <div className="d-flex flex-column gap-3_4">
+                  <div className="form-group">
+                    <label className="form-label filter-label">Actual KM</label>
+                    <Controller
+                      name="totalKm"
+                      control={kmControl}
+                      rules={{
+                        required: "Actual KM is required.",
+                        validate: validatePositiveNumber,
+                      }}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <InputText
+                            {...field}
+                            value={field.value}
+                            placeholder="Enter KM"
+                            //keyfilter={/^[1-9][0-9]*$/}
+                            keyfilter={"pnum"}
+                          />
+                          <div className="p-error">
+                            {kmFormState.errors[field.name]?.message}
+                          </div>
+                        </>
+                      )}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label filter-label">Reason</label>
+                    <Controller
+                      name="totalKmReason"
+                      control={kmControl}
+                      // rules={{
+                      //   required: "Reason is required.",
+                      // }}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <InputText
+                            {...field}
+                            value={field.value}
+                            placeholder="Enter Reason"
+                            keyfilter={/^[a-zA-Z\s]*$/}
+                          />
+                          <div className="p-error">
+                            {kmFormState.errors[field.name]?.message}
+                          </div>
+                        </>
+                      )}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label filter-label">
+                      ASP Waiting Time
+                    </label>
+                    <Controller
+                      name="aspWaitingTime"
+                      control={kmControl}
+                      // rules={{ required: "Waiting Time is required." }}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <Calendar
+                            inputId={field.name}
+                            value={field.value}
+                           onChange={(e) => {
+  field.onChange(e.value);
+}}
+                            timeOnly
+                            showIcon
+                            iconPos={"left"}
+                            placeholder="Select Waiting Time"
+                            icon={<img src={CalendarTimeIcon} />}
+                            pt={{
+                              input: {
+                                className: "border-right-hidden",
+                              },
+                            }}
+                          />
+                          {/* <div className="p-error">
+                            {kmFormState.errors &&
+                              kmFormState.errors[field.name]?.message}
+                          </div> */}
+                        </>
+                      )}
+                    />
+                  </div>
+                  <div className="d-flex ms-auto gap">
+                    <Button
+                      className="btn btn-white"
+                      onClick={(e) => kmpanel.current.hide(e)}
+                      type="button"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className="btn btn-primary"
+                      type="submit"
+                      loading={isLoading}
+                      disabled={isKmSubmitting}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </OverlayPanel>
+             <OverlayPanel ref={AddChargePanel} className="form-overlay-panel">
+          <div className="filter-header">
+            <div className="filter-title"> Charges Collected </div>
+          </div>
+          <div className="filter-body">
+            <form
+              onSubmit={handleCusChargeSubmit(handleCustomerChargeSubmit)}
+              id="cus-charge"
+            >
+              <div className="d-flex flex-column gap-3_4">
+                {cusChargeFields?.map((field, i) => (
+                  <div className="form-group" key={field.id}>
+                    {/* key prop value should be dynamic field id */}
+                    <div className="d-flex gap-2">
+                      <label className="form-label filter-label">
+                        {selectedOptionCustomer[i]?.label}
+                      </label>
+                      <div
+                        className="remove-text ms-auto"
+                        onClick={(e) =>
+                          handleCusChargeRemove(e, selectedOptionCustomer[i], i)
+                        }
+                      >
+                        Remove
+                      </div>
+                    </div>
+                    <Controller
+                      name={`chargesData.${i}.amount`} //Tp update as array of Charges using useFieldArray hook
+                      control={cusChargeControl}
+                      defaultValue={field.value}
+                      rules={{
+                        required: `${selectedOptionCustomer[i]?.label} Required`,
+                      }}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <InputText
+                            {...field}
+                            placeholder="Enter"
+                            keyfilter="pnum"
+                            key={field?.id}
+                          />
+                          {/* {console.log("charge errors", errorsCusCharge)} */}
+                          <div className="p-error">
+                            {errorsCusCharge &&
+                              errorsCusCharge?.chargesData &&
+                              errorsCusCharge?.chargesData[i]?.amount?.message}
+                          </div>
+                        </>
+                      )}
+                    />
+                  </div>
+                ))}
+                {itemsCusCharges?.length > 0 && (
+                  <button
+                    className="btn btn-blue btn-brder-blue"
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      AddChargeMenu.current.show(e);
+                    }}
+                  >
+                    Add new charges
+                  </button>
+                )}
+
+                <div className="d-flex gap-2 ms-auto">
+                  <Button
+                    className="btn btn-white  gap-3_4"
+                    onClick={handleCusCancelCharge}
+                    type="button"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="btn btn-primary gap-3_4"
+                    type="submit"
+                    loading={addChargeLoading}
+                    disabled={selectedOptionCustomer.length > 0 ? false : true}
+                    form="cus-charge"
+                  >
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </form>
+            <Menu
+              model={itemsCusCharges}
+              popup
+              ref={AddChargeMenu}
+              popupAlignment={"top"}
+            ></Menu>
+          </div>
+        </OverlayPanel>
+       <OverlayPanel ref={cusChargesView} className="overlay-panel-card">
+  <div className="towing-charges-card">
+    <div className="towing-charges-card-body">
+             
+
+      {aspResultData[0]?.chargesDetail?.length > 0 &&
+        aspResultData[0]?.chargesDetail.map((chargeData, i) => (
+          <div className="towing-charges-content px-2_3" key={i}>
+            <div className="towing-charges-title">
+              {chargeData.chargeName}
+             
+            </div>
+            <div className="towing-charges-amount">
+              <CurrencyFormat amount={chargeData.amount} />
+            </div>
+          </div>
+        ))}
+
+      <div className="d-flex px-2_3 mt-2_3 justify-content-center">
+       {user?.userTypeId === 141 &&
+  aspResultData[0]?.caseDetail?.statusId === 2 &&
+  user?.id === caseData?.agentId &&
+  user?.levelId !== 1045 &&
+  (
+    [7, 11, 12, 13].includes(aspResultData[0]?.activityStatusId)
+  ) && (
+    <button
+      className="btn-link"
+      onClick={(e) => {
+        handleCusAddEditCharge(e, "Edit");
+        cusChargesView?.current?.hide(e);
+      }}
+    >
+      Edit Charges Collected
+    </button>
+  )}
+
+      </div>
+    </div>
+  </div>
+</OverlayPanel>
+
     </div>
   );
 };

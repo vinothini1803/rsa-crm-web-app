@@ -180,40 +180,81 @@ const AcceptServiceRequestDialog = ({
                   </>
                 )}
               /> */}
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
   <Controller
     name="startDatetime"
     control={control}
     rules={{ required: "Start Date is required." }}
     render={({ field, fieldState }) => (
       <DateTimePicker
-        label="Expected Start Date & Time"
         value={field.value ? dayjs(field.value) : null}
         minDateTime={dayjs()}
+        ampm={false}
+        timeSteps={{ minutes: 1 }}
         onChange={(newValue) => {
           if (!newValue) return;
-
-          // Round to next 15 mins
-          const minutes = newValue.minute();
-          const remainder = minutes % 15;
-          const rounded = remainder === 0
-            ? newValue
-            : newValue.add(15 - remainder, "minute");
-
-          field.onChange(rounded.toDate());
+          field.onChange(newValue.toDate());
           resetField("endDatetime");
         }}
         slotProps={{
           textField: {
-            fullWidth: true,
+            size: "small",
+            placeholder: "Select date & time",
             error: !!fieldState.error,
             helperText: fieldState.error?.message,
+            sx: {
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                height: "34px",
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+
+                "& fieldset": {
+                  borderColor: "#d0d5dd",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#9e9e9e",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#1976d2",
+                },
+              },
+
+              "& .MuiInputBase-input": {
+                padding: "8px 12px",
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+            },
+          },
+          popper: {
+            disablePortal: true,
+            placement: "auto",
+            sx: {
+              zIndex: 1600,
+
+              // Calendar font styling
+              "& .MuiPickersDay-root": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+              "& .MuiPickersCalendarHeader-label": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+              "& .MuiClockNumber-root": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+            },
           },
         }}
       />
     )}
   />
 </LocalizationProvider>
+
+
 
             </div>
           </div>
@@ -222,7 +263,7 @@ const AcceptServiceRequestDialog = ({
               <label className="form-label required">
                 Expected Reach Date & Time
               </label>
-              <Controller
+              {/* <Controller
                 name="endDatetime"
                 control={control}
                 rules={{
@@ -256,7 +297,84 @@ const AcceptServiceRequestDialog = ({
                     </div>
                   </>
                 )}
-              />
+              /> */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+  <Controller
+    name="endDatetime"
+    control={control}
+    rules={{
+      required: "Reach Date is required.",
+      validate: (value) =>
+        !selectedStartDate || value > selectedStartDate
+          ? true
+          : "Reach Date and Time must be greater than Start Date and Time.",
+    }}
+    render={({ field, fieldState }) => (
+      <DateTimePicker
+        value={field.value ? dayjs(field.value) : null}
+        minDateTime={selectedStartDate ? dayjs(selectedStartDate) : undefined}
+        ampm={false}
+        timeSteps={{ minutes: 1 }}
+        onChange={(newValue) => {
+          if (!newValue) return;
+          field.onChange(newValue.toDate());
+        }}
+        slotProps={{
+          textField: {
+            size: "small",
+            placeholder: "Select Date & Time",
+            error: !!fieldState.error,
+            helperText: fieldState.error?.message,
+            sx: {
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                height: "34px",
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+
+                "& fieldset": {
+                  borderColor: "#d0d5dd",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#9e9e9e",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#1976d2",
+                },
+              },
+              "& .MuiInputBase-input": {
+                padding: "8px 12px",
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+            },
+          },
+          popper: {
+            disablePortal: true,
+            placement: "auto",
+            sx: {
+              zIndex: 1600,
+
+              "& .MuiPickersDay-root": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+              "& .MuiPickersCalendarHeader-label": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+              "& .MuiClockNumber-root": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+            },
+          },
+        }}
+      />
+    )}
+  />
+</LocalizationProvider>
+
             </div>
           </div>
           <div className="col-md-12">
