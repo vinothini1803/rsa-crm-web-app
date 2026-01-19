@@ -260,6 +260,7 @@ const ServiceSidebar = ({
       enabled: selectedCaseService ? true : false,
     }
   );
+console.log("11111111111111");
 
   const {
     suggestions,
