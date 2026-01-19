@@ -10,9 +10,11 @@ import {
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Calendar } from "primereact/calendar";
-import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { TextField } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+
 import { Button } from "primereact/button";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
@@ -138,7 +140,7 @@ const AcceptServiceRequestDialog = ({
               <label className="form-label required">
                 Expected Start Date & Time
               </label>
-              <Controller
+              {/* <Controller
                 name="startDatetime"
                 control={control}
                 rules={{ required: "Start Date is required." }}
@@ -177,45 +179,81 @@ const AcceptServiceRequestDialog = ({
                     </div>
                   </>
                 )}
-              />
-            {/* <Controller
-  name="startDatetime"
-  control={control}
-  rules={{ required: "Start Date is required." }}
-  render={({ field, fieldState }) => (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+              /> */}
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
+  <Controller
+    name="startDatetime"
+    control={control}
+    rules={{ required: "Start Date is required." }}
+    render={({ field, fieldState }) => (
       <DateTimePicker
-        {...field}
-        minDateTime={new Date()}
-        onChange={(date) => {
-          const roundedDate = roundUpToNext15(date);
-          field.onChange(roundedDate);
+        value={field.value ? dayjs(field.value) : null}
+        minDateTime={dayjs()}
+        ampm={false}
+        timeSteps={{ minutes: 1 }}
+        onChange={(newValue) => {
+          if (!newValue) return;
+          field.onChange(newValue.toDate());
           resetField("endDatetime");
         }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            fullWidth
-            error={!!fieldState.error}
-            helperText={fieldState.error?.message}
-          />
-        )}
-        minutesStep={15}
-        PopperProps={{
-          // attach calendar popup inside the dialog
-          modifiers: [
-            {
-              name: "preventOverflow",
-              options: {
-                boundary: "viewport",
+        slotProps={{
+          textField: {
+            size: "small",
+            placeholder: "Select date & time",
+            error: !!fieldState.error,
+            helperText: fieldState.error?.message,
+            sx: {
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                height: "34px",
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+
+                "& fieldset": {
+                  borderColor: "#d0d5dd",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#9e9e9e",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#1976d2",
+                },
+              },
+
+              "& .MuiInputBase-input": {
+                padding: "8px 12px",
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
               },
             },
-          ],
+          },
+          popper: {
+            disablePortal: true,
+            placement: "auto",
+            sx: {
+              zIndex: 1600,
+
+              // Calendar font styling
+              "& .MuiPickersDay-root": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+              "& .MuiPickersCalendarHeader-label": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+              "& .MuiClockNumber-root": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+            },
+          },
         }}
       />
-    </LocalizationProvider>
-  )}
-/> */}
+    )}
+  />
+</LocalizationProvider>
+
 
 
             </div>
@@ -225,7 +263,7 @@ const AcceptServiceRequestDialog = ({
               <label className="form-label required">
                 Expected Reach Date & Time
               </label>
-              <Controller
+              {/* <Controller
                 name="endDatetime"
                 control={control}
                 rules={{
@@ -259,7 +297,84 @@ const AcceptServiceRequestDialog = ({
                     </div>
                   </>
                 )}
-              />
+              /> */}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+  <Controller
+    name="endDatetime"
+    control={control}
+    rules={{
+      required: "Reach Date is required.",
+      validate: (value) =>
+        !selectedStartDate || value > selectedStartDate
+          ? true
+          : "Reach Date and Time must be greater than Start Date and Time.",
+    }}
+    render={({ field, fieldState }) => (
+      <DateTimePicker
+        value={field.value ? dayjs(field.value) : null}
+        minDateTime={selectedStartDate ? dayjs(selectedStartDate) : undefined}
+        ampm={false}
+        timeSteps={{ minutes: 1 }}
+        onChange={(newValue) => {
+          if (!newValue) return;
+          field.onChange(newValue.toDate());
+        }}
+        slotProps={{
+          textField: {
+            size: "small",
+            placeholder: "Select Date & Time",
+            error: !!fieldState.error,
+            helperText: fieldState.error?.message,
+            sx: {
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                height: "34px",
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+
+                "& fieldset": {
+                  borderColor: "#d0d5dd",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#9e9e9e",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#1976d2",
+                },
+              },
+              "& .MuiInputBase-input": {
+                padding: "8px 12px",
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+            },
+          },
+          popper: {
+            disablePortal: true,
+            placement: "auto",
+            sx: {
+              zIndex: 1600,
+
+              "& .MuiPickersDay-root": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+              "& .MuiPickersCalendarHeader-label": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+              "& .MuiClockNumber-root": {
+                fontFamily: "'Poppins', sans-serif",
+                fontSize: "10px",
+              },
+            },
+          },
+        }}
+      />
+    )}
+  />
+</LocalizationProvider>
+
             </div>
           </div>
           <div className="col-md-12">

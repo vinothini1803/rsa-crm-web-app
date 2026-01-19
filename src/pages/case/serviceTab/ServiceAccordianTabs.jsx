@@ -207,7 +207,13 @@ const getServiceTimingData = () => {
         return (
           <TabPanel key={index} className="service-detail-tabpanel">
             <div className="border-box bg-white border-transparent">
-              <ViewGrid items={serviceDetailsTabData} className="grid-3" />
+              <ViewGrid 
+                caseData={caseData}
+                activityDetail={aspResultData[activeServiceIndex]}
+                aspRefetch={aspRefetch[activeServiceIndex]}
+                caseStatusId={caseData?.caseStatusId}
+                caseDetailrefetch={caseDetailrefetch}
+              items={serviceDetailsTabData} className="grid-3" />
             </div>
           </TabPanel>
         );
