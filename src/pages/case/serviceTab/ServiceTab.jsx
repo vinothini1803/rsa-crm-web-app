@@ -150,7 +150,7 @@ const ServiceTab = ({
       
       const [itemsCusCharges, setItemsCusCharges] = useState();
       const [selectedOption, setSelectedOption] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(null);
   const [visible, setVisible] = useState(false);
   const [interactionDialogeVisible, setInteractionDialogeVisible] =
     useState(false);
@@ -274,6 +274,7 @@ const ServiceTab = ({
     setValue: setServiceVehicleNumber,
     formState: { errors: serviceVehicleNumberErrors },
   } = useForm({});
+// console.log(aspResultData,"aspResultData");
 
   const {
     handleSubmit: handleActivityStatusSubmit,
@@ -1284,10 +1285,13 @@ const { fields, remove, append } = useFieldArray({
               },
             ]
           : []),
-        ...(activityData?.isReimbursement ||
+        ...(
+    //       activityData?.activityStatusId === 8 // Rejected
+    // ? []:
+          activityData?.isReimbursement ||
         !activityData?.subServiceHasAspAssignment
           ? []
-          : activityData?.activityStatusId === 4
+          : activityData?.activityStatusId === 4 || activityData?.activityStatusId === 8
   ? []  
           : caseData?.agentId &&
             activityData?.agentPickedAt &&
@@ -3649,6 +3653,7 @@ const { fields, remove, append } = useFieldArray({
               className="custom-accordian-tab"
               headerTemplate={() => {
                 const aspData = aspResultData[i];
+console.log(aspData,"aspdataaaa");
 
                 return (
                   <div className="accordian-title d-flex align-items-center gap-2 flex-wrap">
@@ -3694,7 +3699,12 @@ const { fields, remove, append } = useFieldArray({
                     {/* PICKED TIME */}
                     {aspData?.agentPickedAt && (
                       <span className="picked-time-text">
-                        Picked at {aspData.agentPickedAt}
+                        Picked at {aspData.agentPickedAt} 
+                      </span>
+                    )}
+                      {aspData?.aspRejectedAt && (
+                      <span className="picked-time-text">
+                        Rejected at {aspData.aspRejectedAt} 
                       </span>
                     )}
 
@@ -3716,7 +3726,7 @@ const { fields, remove, append } = useFieldArray({
                 );
               }}
             >
-              {aspResultData[i]?.agentPickedAt == null &&
+              {/* {aspResultData[i]?.agentPickedAt == null &&
                 caseData?.caseStatusId == 2 &&
                 // user?.role?.id==3
                 permissions?.includes("pick-service-web") &&
@@ -3736,14 +3746,14 @@ const { fields, remove, append } = useFieldArray({
                       }}
                       onClick={() => setPickTimeConfirmDialog(true)}
                       disabled={user?.levelId == 1045}
-                    />
+                    /> 
                   </div>
-                )}
-              {aspResultData[i]?.agentPickedAt && (
+                )} */}
+              {/* {aspResultData[i]?.agentPickedAt && (
                 <div className="bg-white pick-time-info">
                   Picked by {aspResultData[i]?.agentPickedAt}
                 </div>
-              )}
+              )} */}
               <ServiceAccordianTabs
                 setVisible={setVisible}
                 setActivityDialogVisible={setActivityDialogVisible}
@@ -3852,6 +3862,11 @@ const { fields, remove, append } = useFieldArray({
         data={interactionFormData?.data?.data?.extras}
         onSave={handleSaveInteraction}
         isLoading={interactionMutateLoading}
+  //       caseDetail={
+  //   Array.isArray(aspResultData)
+  //     ? aspResultData?.[0]?.caseDetail
+  //     : aspResultData?.caseDetail
+  // }
       />
       {reminderDialogeVisible && (
         <ReminderSidebar

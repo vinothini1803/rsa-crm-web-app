@@ -19,12 +19,49 @@ import { toast } from "react-toastify";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { EmptyListImage } from "../../utills/imgConstants";
 import moment from "moment";
+import { io } from "socket.io-client";
+import { useEffect } from "react";
+
 
 const NotificationSidebar = ({ onClick, visible }) => {
   const { id } = useSelector(CurrentUser);
   const user = useSelector(CurrentUser);
   const [activeIndex, setActiveIndex] = useState(0);
   const [remainderId, setRemainderId] = useState(null);
+  const [socketNotifications, setSocketNotifications] = useState([]);
+const [liveReminder, setLiveReminder] = useState(null);
+  useEffect(() => {
+  if (!id) return;
+
+  const socket = io("http://localhost:9203", {
+    transports: ["websocket"],
+  });
+
+  socket.on("connect", () => {
+    console.log("🔌 Socket connected:", socket.id);
+    socket.emit("joinRoom", `user_${id}`);
+   
+  });
+
+  // 🔔 LISTEN TO BACKEND EMIT
+  
+ socket.on("aspStartReminder", (data) => {
+    console.log("🔔 Socket reminder received:", data);
+
+    setSocketNotifications((prev) => [
+      {
+        title: data.title,
+        body: data.message,
+        createdAt: data.time,
+      },
+      ...prev,
+    ]);
+  });
+  // socket.on("serviceReminder", (data) => {
+  //   console.log("🔔 Socket reminder received:", data);
+  // });
+}, [id]);
+
   // Web notifications query (sourceFrom = 1)
   const { data, isFetching } = useQuery(
     ["webNotificationList", visible],
@@ -112,6 +149,14 @@ const NotificationSidebar = ({ onClick, visible }) => {
     {
       label: <TabMenuItem label="Mobile" badge={mobileNotificationsCount} />,
     },
+    {
+  label: (
+    <TabMenuItem
+      label="Live"
+      badge={socketNotifications.length}
+    />
+  ),
+    }, 
   ];
   const itemContent = [
     {
@@ -287,6 +332,47 @@ const NotificationSidebar = ({ onClick, visible }) => {
                 );
               })}
             </TabPanel>
+            <TabPanel>
+  {socketNotifications.length > 0 ? (
+    <div className="case-detail-list-wrap">
+      <div className="case-detail-list-caption-wrap">
+        <span className="case-detail-list-caption bg-color">
+          Live Notifications
+        </span>
+      </div>
+
+      <ul className="case-detail-list">
+        {socketNotifications.map((notification, i) => (
+          <li key={i}>
+            <CaseDetail
+              title={notification.title}
+              content={notification.body}
+              date={notification.createdAt}
+              caseChips={false}
+              caseActions={false}
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <div
+      style={{
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <NoDataComponent
+        image={EmptyListImage}
+        text="No live notifications yet."
+        addbtn={false}
+      />
+    </div>
+  )}
+</TabPanel>
+
           </TabView>
         )}
       </div>

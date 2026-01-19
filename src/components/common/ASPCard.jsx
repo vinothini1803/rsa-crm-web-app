@@ -634,6 +634,13 @@ const ASPCard = ({
       }
     );
   };
+  const aspCardTitle =
+    isOwnPatrol && ownPatrolVehicleRegistrationNumber
+      ? `${companyName} - ${companyCode} - ${ownPatrolVehicleRegistrationNumber}`
+      : `${companyName} - ${companyCode}`;
+  const [selectedAspForInteraction, setSelectedAspForInteraction] =
+    useState(null);
+
   return (
     <>
       <div className="asp-card-info-container">
@@ -729,7 +736,20 @@ const ASPCard = ({
               <ChipWithIcon icon={MapIcon} label="Map View" type="yellow" />
             </div>
             <div
-              onClick={() => setInteractionDialogVisible(true)}
+              onClick={() => {
+                setSelectedAspForInteraction({
+                  aspId,
+                  aspTitle:
+                    isOwnPatrol && ownPatrolVehicleRegistrationNumber
+                      ? `${companyName} - ${companyCode} - ${ownPatrolVehicleRegistrationNumber}`
+                      : `${companyName} - ${companyCode}`,
+                  // location: `${location}${addressLineOne}${addressLineTwo}, ${city}, ${state}`,
+                  contactNumber,
+                  whatsappContact,
+                });
+
+                setInteractionDialogVisible(true);
+              }}
               style={{ cursor: "pointer" }}
             >
               <ChipWithIcon
@@ -1363,6 +1383,7 @@ const ASPCard = ({
         data={interactionFormData?.data?.data?.extras}
         onSave={handleSaveInteraction}
         isLoading={interactionMutateLoading}
+         selectedAsp={selectedAspForInteraction}
       />
     </>
   );
