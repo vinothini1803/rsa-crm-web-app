@@ -51,6 +51,8 @@ const ServiceAccordianTabs = ({
   activeServiceIndex,
   caseDetailrefetch,
 }) => {
+  console.log(aspResultData,"aspResultData");
+  
   const [tabIndex, setTabIndex] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [inventoryActiveIndex, setInventoryActiveIndex] = useState(0);
@@ -114,6 +116,7 @@ const ServiceAccordianTabs = ({
     //   ? null
     //   : { label: <TabMenuItem label="Inventory" /> },
     { label: <TabMenuItem label="Activity" /> },
+    { label: <TabMenuItem label="Service Timings" /> },
     aspResultData[activeServiceIndex]?.isReimbursement &&
     aspResultData[activeServiceIndex]?.activityStatusId == 7 &&
     !aspResultData[activeServiceIndex]?.customerNeedToPay
@@ -165,6 +168,35 @@ const ServiceAccordianTabs = ({
     }
     return null;
   };
+
+const getServiceTimingData = () => {
+  const activity = aspResultData?.[activeServiceIndex];
+  const caseDetail = activity?.caseDetail;
+
+  const isRejected = !!activity?.aspRejectedAt;
+
+  //  Rejected Flow
+  if (isRejected) {
+    return [
+      { label: "Case Created At", value: caseDetail?.caseCreatedDateTime || "-" },
+      { label: "Agent Picked At", value: activity?.agentPickedAt || "-" },
+      { label: "ASP Rejected At", value: activity?.aspRejectedAt || "-" }
+    ];
+  }
+
+  //  Normal Flow
+  return [
+    { label: "Case Created At", value: caseDetail?.caseCreatedDateTime || "-" },
+    { label: "Agent Picked At", value: activity?.agentPickedAt || "-" },
+    { label: "ASP Accepted At", value: activity?.aspServiceAcceptedAt || "-" },
+    { label: "Started To Breakdown At", value: activity?.startedToBreakdownAt || "-" },
+    { label: "Reached Breakdown At", value: activity?.aspReachedToBreakdownAt || "-" },
+    { label: "Activity Started At", value: activity?.serviceStartDateTime || "-" },
+    { label: "Activity Ended At", value: activity?.serviceEndDateTime || "-" },
+    { label: "End Trip At", value: activity?.aspEndServiceAt || "-" }
+  ];
+};
+
 
   // Helper function to render TabPanels in the correct order
   const renderTabPanels = () => {
@@ -349,6 +381,19 @@ const ServiceAccordianTabs = ({
           </TabPanel>
         );
       }
+      if (label === "Service Timings") {
+  return (
+    <TabPanel key={index} className="service-detail-tabpanel">
+      <div className="border-box bg-white border-transparent">
+        <ViewGrid
+          items={getServiceTimingData()}
+          className="grid-3"
+        />
+      </div>
+    </TabPanel>
+  );
+}
+
 
       return null;
     });

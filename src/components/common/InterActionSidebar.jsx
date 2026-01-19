@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar } from "primereact/sidebar";
 import {
   DialogCloseIcon,
@@ -22,21 +22,27 @@ const InterActionSidebar = ({
   isLoading,
   isFromHeader = false,
   levelId,
+  caseDetail,selectedAsp
 }) => {
+  // console.log("selectedAsp", selectedAsp);
+  const DEFAULT_CHANNEL_ID = 291; // Phone
+  const DEFAULT_TO_ID = 303; // ASP Mechanic
+  const DEFAULT_CALL_TYPE_ID = 311; // Out Bound
   const defaultValues = {
     caseDetailId: "",
-    channelId: "",
-    toId: "",
-    callTypeId: "",
+    channelId: DEFAULT_CHANNEL_ID,
+    toId: DEFAULT_TO_ID,
+    callTypeId: DEFAULT_CALL_TYPE_ID,
     title: "",
     description: "",
   };
+
   const {
     handleSubmit,
     control,
     getValues,
     formState: { errors },
-    reset,
+    reset,setValue
   } = useForm({
     defaultValues,
   });
@@ -51,8 +57,73 @@ const InterActionSidebar = ({
     { id: 4, label: "Web" },
     { id: 5, label: "Push Notification" },
   ];
+  // useEffect(() => {
+  //   if (caseDetail && caseDetail.caseDetailId) {
+  //     setFilteredCases((prev) => {
+  //       const exists = prev.some(
+  //         (c) => c.caseDetailId === caseDetail.caseDetailId
+  //       );
+  //       if (!exists) return [caseDetail, ...prev];
+  //       return prev;
+  //     });
+  //     reset((formValues) => ({
+  //       ...formValues,
+  //       caseDetailId: caseDetail, // 👈 set the full object here
+  //     }));
+  //   } else {
+  //     // No case exists (like on home page) => clear AutoComplete
+  //     setFilteredCases([]);
+  //     reset(defaultValues);
+  //   }
+  // }, [visible, caseDetail, reset]);
+
+  // console.log(filteredCases,"filtereddd casesss");
 
   // Search Cases for Autocomplete
+ 
+useEffect(() => {
+  if (!visible) return;
+
+  // ✅ store ID, not object
+  setSelectedChannels([DEFAULT_CHANNEL_ID]);
+
+  if (caseDetail && caseDetail.caseDetailId) {
+    setFilteredCases((prev) => {
+      const exists = prev.some(
+        (c) => c.caseDetailId === caseDetail.caseDetailId
+      );
+      if (!exists) return [caseDetail, ...prev];
+      return prev;
+    });
+
+    reset((formValues) => ({
+      ...formValues,
+      caseDetailId: caseDetail,
+      channelId: DEFAULT_CHANNEL_ID,
+      toId: DEFAULT_TO_ID,
+      callTypeId: DEFAULT_CALL_TYPE_ID,
+    }));
+  } else {
+    setFilteredCases([]);
+    reset({
+      ...defaultValues,
+      channelId: DEFAULT_CHANNEL_ID,
+      toId: DEFAULT_TO_ID,
+      callTypeId: DEFAULT_CALL_TYPE_ID,
+    });
+  }
+}, [visible, caseDetail]);
+useEffect(() => {
+  if (!visible) return;
+
+  if (selectedAsp?.aspTitle) {
+    setValue("title", selectedAsp.aspTitle);
+  } else {
+    setValue("title", "");
+  }
+}, [selectedAsp, visible, setValue]);
+
+
   const { mutate: searchCasesMutate } = useMutation(
     ({ searchKey, levelId }) => searchCasesForInteraction(searchKey, levelId),
     {
@@ -85,10 +156,18 @@ const InterActionSidebar = ({
 
   const onInteractionSubmit = (values) => {
     // Extract caseDetailId from case object if it's an object
+    // console.log("onInteractionSubmit", values.caseDetailId?.caseDetailId);
+
     const formValues = {
       ...values,
-      caseDetailId: values.caseDetailId?.id || values.caseDetailId || null,
+      caseDetailId:
+        values.caseDetailId?.caseDetailId ||
+        values.caseDetailId?.id ||
+        values.caseDetailId ||
+        null,
     };
+    console.log(formValues, "formvaluessss");
+
     onSave(formValues, reset);
   };
 
@@ -153,6 +232,28 @@ const InterActionSidebar = ({
                         </>
                       )}
                     />
+                    {/* <Controller
+  name="caseDetailId"
+  control={control}
+  rules={{ required: "Case Number is required." }}
+  render={({ field, fieldState }) => (
+    <>
+      <AutoComplete
+        placeholder="Search Case Number"
+        inputId={field.name}
+        value={field.value} // full object
+        field="caseNumber" // display this property
+        suggestions={filteredCases}
+        completeMethod={searchCases}
+        onChange={(e) => field.onChange(e.value)} // 👈 use e.value
+        itemTemplate={(item) => <div>{item.caseNumber}</div>}
+      />
+      <div className="p-error">
+        {errors[field.name]?.message}
+      </div>
+    </>
+  )}
+/> */}
                   </div>
                 </div>
               )}
@@ -172,7 +273,8 @@ const InterActionSidebar = ({
                             onSelect={(items) =>
                               handleChannelSelect(items, field)
                             }
-                            selectedChannels={selectedChannels}
+                            // selectedChannels={selectedChannels}
+                            defaultItems={selectedChannels}
                           />
                         </div>
 

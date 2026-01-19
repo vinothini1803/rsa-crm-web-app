@@ -42,6 +42,8 @@ import {
   addInteraction,
 } from "../../../services/deliveryRequestViewService";
 import { useMapViewContext } from "../../contexts/MapViewContext";
+import EditCaseDetailsDialog from "./EditCaseDetailsDialog";
+import EditImage from "../../assets/img/icons/edit-icon.svg";
 
 const Header = () => {
   const menu = useRef(null);
@@ -113,7 +115,7 @@ const Header = () => {
         !filterDropdownRef.current.contains(event.target)
       ) {
         setExpandedFilterType(null);
-      }
+      } 
     };
 
     if (expandedFilterType) {
@@ -206,6 +208,7 @@ const Header = () => {
       enabled: caseAspAssignment,
     }
   );
+  // console.log(activityData,"activitydataaa");
 
   // Get Interaction Form Data
   const { data: interactionFormData } = useQuery(
@@ -387,6 +390,34 @@ const Header = () => {
     }
   }, [pathname]);
 
+  const caseId = pathname?.split("/")[3];
+  const isAspAssignmentRoute =
+    pathname?.split("/")[1] === "cases" &&
+    pathname?.split("/")[2] === "asp-assignment" &&
+    caseId;
+
+  const { data: caseDetailDataa } = useQuery(
+    ["caseAspInfoDetails", caseId],
+    () => getCaseInfo({ caseId }),
+    {
+      enabled: !!caseId,
+    }
+  );
+  // console.log(caseDetailData, "caseDetailData");
+
+  const caseDetail =
+    caseAspAssignment && caseDetailDataa?.data?.success
+      ? caseDetailDataa?.data?.data?.[0]
+      : null;
+
+  // console.log(caseDetailDataa?.data?.data?.[0], "caseeeee");
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [selectedCase, setSelectedCase] = useState({
+    caseSubject: "",
+    subService: "",
+  });
+  // console.log(caseDetailData, "caseDetailData");
+
   return (
     <header>
       <div className="header-wrap">
@@ -400,47 +431,71 @@ const Header = () => {
                   {caseDetailData?.data?.data[0]?.caseNumber}
                 </span>
               </div>
-              <div className="delivery-request-detail" >
-                 <div>
-                  <div className="delivery-request-label">
-    Case Details
-  </div>
-  
-                <div className="delivery-request-name">
-                  <img src={SpannerImage} alt="spanner_icon" />
-                  <span>
-                    {caseDetailData?.data?.data[0]?.caseSubject} -{" "}
-                    {activityData?.data?.data[0]?.subService}
-                  </span>
-                </div></div>
-<div>
-                  <div className="delivery-request-label">
-    Date and time
-  </div>
-  
-                <div className="delivery-request-name">
-                  <img src={CalendarViewIcon} alt={"calendar-icon"} />
-                  <span>{caseDetailData?.data?.data[0]?.createdAt} </span>
-                </div></div>
+              <div className="delivery-request-detail">
                 <div>
-                   <div className="delivery-request-label">
-    Vehicle Brand
-  </div>
-                <div className="delivery-request-name">
-                  <img src={VehicleGreyIcon} alt={"milestone-icon"} />
-                  <span>{caseDetailData?.data?.data[0]?.vehicleMake} ,
-                    {caseDetailData?.data?.data[0]?.vehicleModel}
-                     </span>
-</div></div>
-<div>
-                   <div className="delivery-request-label">
-   Vin
-  </div>
- <div className="delivery-request-name">
-                  <span className="vehicle-detail">
-                    {caseDetailData?.data?.data[0]?.vin}
-                  </span></div></div>
-                    {/* <div>
+                  <div className="delivery-request-label">Case Details</div>
+
+                  <div className="delivery-request-name">
+                    {/* <img src={EditImage} alt="spanner_icon" /> */}
+                    <span>
+                      {caseDetailData?.data?.data[0]?.caseSubject} -{" "}
+                      {activityData?.data?.data[0]?.subService}
+                    </span>
+                  
+  {caseDetailData?.data?.data[0]?.service !== "Mechanical" && (
+    <img
+      src={EditImage}
+      alt="edit"
+      style={{ cursor: "pointer" }}
+      onClick={() => {
+        setSelectedCase({
+          caseSubject: caseDetailData?.data?.data[0],
+          activity: activityData?.data?.data[0],
+        });
+        setShowEditPopup(true);
+      }}
+    />
+  )}
+                    {/* <i 
+                      className="pi pi-pencil edit-icon"
+                      onClick={() => {
+                        setSelectedCase({
+                          caseSubject:
+                            caseDetailData?.data?.data[0]?.caseSubject,
+                          subService: activityData?.data?.data[0]?.subService,
+                        });
+                        setShowEditPopup(true);
+                      }}
+                    /> */}
+                  </div>
+                </div>
+                <div>
+                  <div className="delivery-request-label">Date and time</div>
+
+                  <div className="delivery-request-name">
+                    <img src={CalendarViewIcon} alt={"calendar-icon"} />
+                    <span>{caseDetailData?.data?.data[0]?.createdAt} </span>
+                  </div>
+                </div>
+                <div>
+                  <div className="delivery-request-label">Vehicle Brand</div>
+                  <div className="delivery-request-name">
+                    <img src={VehicleGreyIcon} alt={"milestone-icon"} />
+                    <span>
+                      {caseDetailData?.data?.data[0]?.vehicleMake} ,
+                      {caseDetailData?.data?.data[0]?.vehicleModel}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <div className="delivery-request-label">Vin</div>
+                  <div className="delivery-request-name">
+                    <span className="vehicle-detail">
+                      {caseDetailData?.data?.data[0]?.vin}
+                    </span>
+                  </div>
+                </div>
+                {/* <div>
                     <div className="delivery-request-label">
     Model
     </div>
@@ -448,14 +503,13 @@ const Header = () => {
                     <span className="vehicle-detail">
                       {caseDetailData?.data?.data[0]?.vehicleModel}
                     </span></div></div> */}
-                  <div>
-                   <div className="delivery-request-label">
-   Vehicle Type
-  </div>
- <div className="delivery-request-name">
-                  <span className="vehicle-detail">
-                    {caseDetailData?.data?.data[0]?.vehicleType}
-                  </span></div>
+                <div>
+                  <div className="delivery-request-label">Vehicle Type</div>
+                  <div className="delivery-request-name">
+                    <span className="vehicle-detail">
+                      {caseDetailData?.data?.data[0]?.vehicleType}
+                    </span>
+                  </div>
                 </div>
               </div>
             </>
@@ -1058,6 +1112,7 @@ const Header = () => {
                 className="img-fluid"
                 src={NotificationImage}
                 alt="Notification Icon"
+                
               />
               <span className="header-icon-dot"></span>
             </button>
@@ -1135,6 +1190,21 @@ const Header = () => {
         isLoading={interactionMutateLoading}
         isFromHeader={true}
         levelId={user?.levelId}
+        caseDetail={caseDetailDataa?.data?.data?.[0]}
+      />
+      {/* <EditCaseDetailsDialog
+        visible={showEditPopup}
+        onHide={() => setShowEditPopup(false)}
+        selectedCase={selectedCase}
+        onSave={(payload) => {
+          updateCaseServiceMutation.mutate(payload);
+        }}
+      /> */}
+      <EditCaseDetailsDialog
+        visible={showEditPopup}
+        selectedCase={selectedCase}
+        onHide={() => setShowEditPopup(false)}
+        onSave={(payload) => updateCaseServiceMutation.mutate(payload)}
       />
     </header>
   );

@@ -10,6 +10,9 @@ import {
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Calendar } from "primereact/calendar";
+import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { TextField } from "@mui/material";
 import { Button } from "primereact/button";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
@@ -175,6 +178,46 @@ const AcceptServiceRequestDialog = ({
                   </>
                 )}
               />
+            {/* <Controller
+  name="startDatetime"
+  control={control}
+  rules={{ required: "Start Date is required." }}
+  render={({ field, fieldState }) => (
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <DateTimePicker
+        {...field}
+        minDateTime={new Date()}
+        onChange={(date) => {
+          const roundedDate = roundUpToNext15(date);
+          field.onChange(roundedDate);
+          resetField("endDatetime");
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            fullWidth
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+          />
+        )}
+        minutesStep={15}
+        PopperProps={{
+          // attach calendar popup inside the dialog
+          modifiers: [
+            {
+              name: "preventOverflow",
+              options: {
+                boundary: "viewport",
+              },
+            },
+          ],
+        }}
+      />
+    </LocalizationProvider>
+  )}
+/> */}
+
+
             </div>
           </div>
           <div className="col-md-6">
